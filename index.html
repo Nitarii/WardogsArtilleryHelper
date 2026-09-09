@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#0b1014" />
-  <meta name="description" content="Interactive WARDOGS artillery helper for Bakurani, Ozeti and Zestafona." />
+  <meta name="description" content="WARDOGS artillery fire-control helper for Bakurani, Ozeti and Zestafona with SPH-2, L81 and Terrain3D elevations." />
   <title>WARDOGS Fire Control</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -14,7 +14,7 @@
       <div class="brand">
         <span class="brand-mark">W</span>
         <div>
-          <strong>WARDOGS</strong>
+          <div class="brand-line"><strong>WARDOGS</strong><span id="versionBadge" class="version-badge">v1.1.0</span></div>
           <small data-i18n="fireControl">FIRE CONTROL</small>
         </div>
       </div>
@@ -41,7 +41,7 @@
     </header>
 
     <main id="mapWrap">
-      <canvas id="mapCanvas"></canvas>
+      <canvas id="mapCanvas" aria-label="WARDOGS tactical map"></canvas>
       <div class="map-vignette"></div>
 
       <div class="mode-panel glass">
@@ -57,9 +57,10 @@
           <kbd>2</kbd>
         </button>
         <button id="clearBtn" class="clear-btn" data-i18n="clear">Effacer</button>
+        <div class="shortcut-hint" data-i18n="shortcuts">1 GUN · 2 TARGET · molette zoom · glisser déplacer</div>
       </div>
 
-      <div id="statusPill" class="status-pill glass">
+      <div id="statusPill" class="status-pill glass" aria-live="polite">
         <span class="pulse"></span>
         <span id="statusText" data-i18n="clickGun">Clique sur ta position d'artillerie</span>
       </div>
@@ -69,13 +70,16 @@
         <button id="zoomOut" aria-label="Zoom out">−</button>
       </div>
 
-      <section id="solutionPanel" class="solution glass waiting">
+      <section id="solutionPanel" class="solution glass waiting" aria-live="polite">
         <div class="solution-head">
           <div>
             <small data-i18n="firingSolution">FIRING SOLUTION</small>
             <h2 id="solutionTitle" data-i18n="waitingTarget">En attente de la cible</h2>
           </div>
-          <span id="rangeBadge">—</span>
+          <div class="solution-actions">
+            <button id="copySolutionBtn" class="copy-btn" disabled data-i18n="copy">Copier</button>
+            <span id="rangeBadge">—</span>
+          </div>
         </div>
 
         <div class="solution-grid">
@@ -99,8 +103,8 @@
         <div id="elevationBox" class="elevation-box">
           <div class="elevation-main">
             <span data-i18n="elevation">ÉLÉVATION</span>
-            <strong id="elevationValue">—</strong>
-            <small>MIL</small>
+            <div><strong id="elevationValue">—</strong><small>MIL</small></div>
+            <em id="elevationLabel"></em>
           </div>
           <div id="secondarySolution" class="secondary-solution hidden">
             <span id="secondaryLabel">LOW</span>
@@ -114,8 +118,20 @@
           <div><span>TGT</span><code id="targetCoords">—</code></div>
         </div>
 
+        <div class="terrain-card">
+          <div class="terrain-head">
+            <span data-i18n="terrain">TERRAIN3D</span>
+            <small id="terrainStatus">—</small>
+          </div>
+          <div class="terrain-grid">
+            <div><span data-i18n="gunAsl">GUN ASL</span><strong id="terrainOrigin">—</strong></div>
+            <div><span data-i18n="targetAsl">TGT ASL</span><strong id="terrainTarget">—</strong></div>
+            <div><span data-i18n="deltaZ">ΔZ</span><strong id="terrainDelta">—</strong></div>
+          </div>
+        </div>
+
         <div id="warningBox" class="warning hidden"></div>
-        <p class="terrain-note" data-i18n="terrainNote">Solution de base sur terrain plat. La différence d'altitude et l'inclinaison du SPH-2 peuvent modifier l'impact.</p>
+        <p class="terrain-note" data-i18n="terrainNote">Les altitudes Terrain3D sont réelles. Les MIL affichés restent ceux de la table de tir tant qu'une correction Terrain3D n'est pas certifiée. Nivelez le SPH-2 avant de tirer.</p>
       </section>
 
       <div id="cursorCoords" class="cursor-coords glass">X — &nbsp; Y —</div>
@@ -123,10 +139,12 @@
 
     <footer>
       <span>WARDOGS Fire Control · Nitarii</span>
+      <span data-i18n="mapCredit">Cartes / Terrain3D : données communautaires WARDOGS</span>
       <span data-i18n="community">Outil communautaire non officiel</span>
     </footer>
   </div>
 
+  <noscript>This tool requires JavaScript.</noscript>
   <script src="app.js"></script>
 </body>
 </html>
